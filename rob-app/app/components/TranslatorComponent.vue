@@ -1,13 +1,14 @@
 <script setup lang="ts">
+import {useLocalStorage} from '@vueuse/core'
 const firstLinkValue = ref('')
 const translatedLink = ref('')
 const originService = ref('')
 const targetService = ref('')
 const copied = ref(false)
-const { data } = await useFetch('/api/getSpotifyLink')
 const disabled = computed(() => {
     return originService.value == '' && targetService.value == '' ? true : false
 })
+
 
 function determineService(link) {
     const appleRegex = /(\bappl\w+\b)/g;
@@ -36,8 +37,14 @@ function copy() {
 
 // Triggers the API 
 async function convert() {
-    const data = await $fetch('/api/getSpotifyLink')
+    const token = localStorage.getItem("spotifyToken")
+
+    const info = await $fetch(`/api/parseSpotifyLink?uri=spotify.com/album/6JbGZGta38AArBgflt024C&token=${token}`)
+
+    const artistName = ref('myFaveArtist')
+    const data = await $fetch(`/api/getSpotifyLink?artist=${artistName.value}&token=${token}`)
     translatedLink.value = await data.link
+    
 }
 // Resets the button state on clear
 watch(firstLinkValue, async (newLink, oldLink) => {

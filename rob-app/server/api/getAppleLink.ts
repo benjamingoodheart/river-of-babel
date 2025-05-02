@@ -1,6 +1,6 @@
 export default defineEventHandler((event)=>{
     
-    //call spotify api
+    //call apple api
     return{
         link: "music.apple.com/whatever"
     }

@@ -14,10 +14,10 @@ export default defineEventHandler(async (event)=>{
         }}
     ).then((res)=>{
         response.value = res.data
-        console.log(res.data.access_token)
+        console.log(res)
        
     }) 
     if (response.value != '') {
-        return response.value.access_token
+        return response.value
     }
 })

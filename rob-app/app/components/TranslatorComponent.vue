@@ -37,8 +37,8 @@ function copy() {
 
 // Triggers the API 
 async function convert() {
-    const token = localStorage.getItem("spotifyToken")
-
+    const store = localStorage.getItem("spotify")
+    
     const info = await $fetch(`/api/parseSpotifyLink?uri=spotify.com/album/6JbGZGta38AArBgflt024C&token=${token}`)
 
     const artistName = ref('myFaveArtist')

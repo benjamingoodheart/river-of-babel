@@ -31,7 +31,7 @@ function determineService(link) {
     }
 }
 
-function handleTokenLoad(event){
+function handleTokenLoad(event) {
     loaded.value = true
     token.value = tokenStore.getToken().value
 }
@@ -49,10 +49,10 @@ async function parse() {
     const info = await $fetch(`/api/parseSpotifyLink?uri=spotify.com/album/6JbGZGta38AArBgflt024C&token=${token.value}`)
     //parse
     let release = await info.release
-    
+
 }
 
-async function findRelease(artist, title, ){
+async function findRelease(artist, title,) {
     const data = await $fetch(`/api/getSpotifyLink?artist=${artist.value}&token=${token.value}`)
     translatedLink.value = await data.link
 }
@@ -66,23 +66,25 @@ watch(firstLinkValue, async (newLink, oldLink) => {
 
 </script>
 <template>
-     <TokenComponent @tokensStored="handleTokenLoad"/>
-        <div class="flex flex-col items-center justify-center gap-4 mt-5" v-if="loaded==true">
-       
-        <UInput placeholder="Paste Your Link Here" v-model="firstLinkValue"
-            :onchange="determineService(firstLinkValue)" size="xl" class="w-full"/>
+    <TokenComponent @tokensStored="handleTokenLoad" />
+    <div class="flex flex-col items-center justify-center gap-4 mt-5" v-if="loaded == true">
+
+        <UInput placeholder="Paste Your Link Here" v-model="firstLinkValue" :onchange="determineService(firstLinkValue)"
+            size="xl" class="w-full" />
         <UButton :onclick="parse" color="neutral" variant="soft" v-if="disabled" :disabled="disabled">Convert Your
             Link</UButton>
         <UButton :onclick="parse" color="primary" variant="soft" v-if="!disabled" :disabled="disabled">Get
             {{ targetService }} Link</UButton>
 
         <UCard v-if="translatedLink != ''" class="w-full text-center">
-           
-            <UButton trailing="true" icon="material-symbols:content-copy-outline" :onclick="copy" v-if="!copied" variant="ghost" size="xs" class="my-auto" > {{ translatedLink }} </UButton>
-            <UButton trailing="true" icon="material-symbols:content-copy" :onclick="copy" v-if="copied" variant="ghost" > Copied! </UButton>
+
+            <UButton trailing="true" icon="material-symbols:content-copy-outline" :onclick="copy" v-if="!copied"
+                variant="ghost" size="xs" class="my-auto"> {{ translatedLink }} </UButton>
+            <UButton trailing="true" icon="material-symbols:content-copy" :onclick="copy" v-if="copied" variant="ghost">
+                Copied! </UButton>
         </UCard>
-        </div>
-        <div class="flex flex-col items-center justify-center gap-4 mt-5" v-else>
-            <USkeleton class="h-8 w-2/5"></USkeleton>
-        </div>
+    </div>
+    <div class="flex flex-col items-center justify-center gap-4 mt-5" v-else>
+        <USkeleton class="h-8 w-2/5"></USkeleton>
+    </div>
 </template>

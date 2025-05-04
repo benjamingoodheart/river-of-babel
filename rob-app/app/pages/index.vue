@@ -1,9 +1,6 @@
-import { TokenComponent } from '../../.nuxt/components';
-
 <template>
   <UContainer class="w-sm">
-
+    <HeaderComponent/>
     <TranslatorComponent/>
-    <TokenComponent/>
   </UContainer>
 </template>

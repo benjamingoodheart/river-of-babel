@@ -1,14 +1,19 @@
 <script setup lang="ts">
-import {useLocalStorage} from '@vueuse/core'
+import { useTokenStore } from '../stores/tokenStore';
+
+const tokenStore = useTokenStore()
 const firstLinkValue = ref('')
 const translatedLink = ref('')
 const originService = ref('')
 const targetService = ref('')
 const copied = ref(false)
+const token = ref()
 const disabled = computed(() => {
     return originService.value == '' && targetService.value == '' ? true : false
 })
 
+
+const loaded = ref(false)
 
 function determineService(link) {
     const appleRegex = /(\bappl\w+\b)/g;
@@ -26,6 +31,10 @@ function determineService(link) {
     }
 }
 
+function handleTokenLoad(event){
+    loaded.value = true
+    token.value = tokenStore.getToken().value
+}
 function copy() {
     navigator.clipboard.writeText(translatedLink.value)
     copied.value = true
@@ -36,15 +45,16 @@ function copy() {
 }
 
 // Triggers the API 
-async function convert() {
-    const store = localStorage.getItem("spotify")
+async function parse() {
+    const info = await $fetch(`/api/parseSpotifyLink?uri=spotify.com/album/6JbGZGta38AArBgflt024C&token=${token.value}`)
+    //parse
+    let release = await info.release
     
-    const info = await $fetch(`/api/parseSpotifyLink?uri=spotify.com/album/6JbGZGta38AArBgflt024C&token=${token}`)
+}
 
-    const artistName = ref('myFaveArtist')
-    const data = await $fetch(`/api/getSpotifyLink?artist=${artistName.value}&token=${token}`)
+async function findRelease(artist, title, ){
+    const data = await $fetch(`/api/getSpotifyLink?artist=${artist.value}&token=${token.value}`)
     translatedLink.value = await data.link
-    
 }
 // Resets the button state on clear
 watch(firstLinkValue, async (newLink, oldLink) => {
@@ -56,16 +66,14 @@ watch(firstLinkValue, async (newLink, oldLink) => {
 
 </script>
 <template>
-    <div class="flex flex-col items-center justify-center gap-4 mt-10">
-        <h1 class="font-bold text-2xl text-(--ui-primary)">
-            River of Babel
-        </h1>
-        <USeparator />
+     <TokenComponent @tokensStored="handleTokenLoad"/>
+        <div class="flex flex-col items-center justify-center gap-4 mt-5" v-if="loaded==true">
+       
         <UInput placeholder="Paste Your Link Here" v-model="firstLinkValue"
             :onchange="determineService(firstLinkValue)" size="xl" class="w-full"/>
-        <UButton :onclick="convert" color="neutral" variant="soft" v-if="disabled" :disabled="disabled">Convert Your
+        <UButton :onclick="parse" color="neutral" variant="soft" v-if="disabled" :disabled="disabled">Convert Your
             Link</UButton>
-        <UButton :onclick="convert" color="primary" variant="soft" v-if="!disabled" :disabled="disabled">Get
+        <UButton :onclick="parse" color="primary" variant="soft" v-if="!disabled" :disabled="disabled">Get
             {{ targetService }} Link</UButton>
 
         <UCard v-if="translatedLink != ''" class="w-full text-center">
@@ -73,5 +81,8 @@ watch(firstLinkValue, async (newLink, oldLink) => {
             <UButton trailing="true" icon="material-symbols:content-copy-outline" :onclick="copy" v-if="!copied" variant="ghost" size="xs" class="my-auto" > {{ translatedLink }} </UButton>
             <UButton trailing="true" icon="material-symbols:content-copy" :onclick="copy" v-if="copied" variant="ghost" > Copied! </UButton>
         </UCard>
-    </div>
+        </div>
+        <div class="flex flex-col items-center justify-center gap-4 mt-5" v-else>
+            <USkeleton class="h-8 w-2/5"></USkeleton>
+        </div>
 </template>

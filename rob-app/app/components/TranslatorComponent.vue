@@ -33,7 +33,7 @@ function determineService(link) {
 
 function handleTokenLoad(event) {
     loaded.value = true
-    token.value = tokenStore.getToken().value
+    token.value = tokenStore.getSpotifyToken().value
 }
 function copy() {
     navigator.clipboard.writeText(translatedLink.value)
@@ -46,15 +46,23 @@ function copy() {
 
 // Triggers the API 
 async function parse() {
-    const info = await $fetch(`/api/parseSpotifyLink?uri=spotify.com/album/6JbGZGta38AArBgflt024C&token=${token.value}`)
+    const {data} = await useFetch(`/api/parseSpotifyLink?uri=spotify.com/album/6JbGZGta38AArBgflt024C&token=${token.value}`)
     //parse
-    let release = await info.release
+    const release = await data.value.release
+    const title = await release._value.title
+    const artists_array = await release._value.artists
+    const artists_names = ref([])
+    for(var a in artists_array){
+        let name = artists_array[a].name
+        artists_names.value.push(name)
+    }
+    findRelease(artists_names.value[0], title)
+}   
 
-}
-
-async function findRelease(artist, title,) {
-    const data = await $fetch(`/api/getSpotifyLink?artist=${artist.value}&token=${token.value}`)
+async function findRelease(artists, title) {
+    const data = await $fetch(`/api/getSpotifyLink?artist=${artists}&title=${title}&token=${token.value}`)
     translatedLink.value = await data.link
+
 }
 // Resets the button state on clear
 watch(firstLinkValue, async (newLink, oldLink) => {

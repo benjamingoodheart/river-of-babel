@@ -2,29 +2,30 @@
 <script setup>
 const store = useTokenStore()
 const emit = defineEmits(['tokensStored'])
-// const {data} = await useFetch('/api/getJWT')
-// console.log(data)
-const {status, data} = await useFetch('/api/getSpotifyToken')
+const {data} = await useFetch('/api/getJWT')
+console.log(data.value)
+
 const isExpired = computed(()=>{
-    if(store.getLastFetched().value == null){
+    let now = Date.now()
+    if(((now*1000)-(store.getLastFetched().value*1000))/10000  >= 3599){
         return true
     }
-    let now = Date.now()
-    console.log(store.getLastFetched())
-
-    if(now-store.getLastFetched().value >= 3599){
-        console.log(now-store.getLastFetched().value)
+    if(store.getLastFetched().value == null){
         return true
     }
     return false
 })
 
-if(status.value == "success" && isExpired){
-    let cleanToken = String(data.value.access_token).replace("\r\n","")
-    store.setToken(cleanToken)
-    console.log(store.getToken().value)
-    store.setLastFetched(Date.now())
-    emit('tokensStored', data)
+if(!isExpired){
+    emit('tokensStored')
+}
+if(isExpired){
+    const {status, data} = await useFetch('/api/getSpotifyToken')
+    let cleanToken = String(data.value.access_token)
+    store.setSpotifyToken(cleanToken)
+    console.log(store.getSpotifyToken().value)
+    store.setSpotifyLastFetched(Date.now())
+    emit('tokensStored')
 
 }
 

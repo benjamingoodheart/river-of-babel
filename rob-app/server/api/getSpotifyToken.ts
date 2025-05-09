@@ -1,9 +1,9 @@
 import axios from 'axios'
 import {ref} from 'vue'
 export default defineEventHandler(async (event)=>{
-
     const endpoint = 'https://accounts.spotify.com/api/token'
-    const response = ref('')
+    const response = ref('')    
+    
     await axios.post(
         endpoint, {
             'grant_type':'client_credentials',

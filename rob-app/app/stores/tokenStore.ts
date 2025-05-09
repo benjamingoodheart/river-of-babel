@@ -1,23 +1,42 @@
 export const useTokenStore = defineStore('token', () => {
-  const token = ref("");
-  const lastFetched = ref(null);
-  const expiryTime = ref(3599)
+  const spotifyToken = ref("");
+  const lastSpotifyFetched = ref(null);
+  const spotifyExpiryTime = ref(3599)
 
-  function setToken(newToken: String) {
-    token.value = newToken;
+  const appleToken = ref("")
+  const lastAppleFetched = ref("")
+  const appleExpiryTime = ref(3599)
+
+  function setSpotifyToken (newToken: String) {
+    spotifyToken.value = newToken;
   }
 
-  function getToken(){
-    return token
+  function getSpotifyToken(){
+    return spotifyToken
   }
 
-  function setLastFetched(lastFetchedTime:Date){
-    lastFetched.value = lastFetchedTime;
+  function setSpotifyLastFetched(lastFetchedTime:Date){
+    lastSpotifyFetched.value = lastFetchedTime;
   }
 
-  function getLastFetched(){
-    return lastFetched
+  function getSpotifyLastFetched(){
+    return lastSpotifyFetched
+  }
+  function setAppleToken (newToken: String) {
+    appleToken.value = newToken;
   }
 
-  return {setToken, getToken, setLastFetched, getLastFetched}
+  function getAppleToken(){
+    return appleToken
+  }
+
+  function setAppleLastFetched(lastFetchedTime:Date){
+    lastAppleFetched.value = lastFetchedTime;
+  }
+
+  function getAppleLastFetched(){
+    return lastAppleFetched
+  }
+
+  return {setSpotifyToken , getSpotifyToken, setSpotifyLastFetched, getSpotifyLastFetched, setAppleToken, getAppleToken, setAppleLastFetched, getAppleLastFetched}
 });

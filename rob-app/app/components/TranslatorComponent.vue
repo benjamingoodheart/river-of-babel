@@ -7,12 +7,11 @@ const translatedLink = ref('')
 const originService = ref('')
 const targetService = ref('')
 const copied = ref(false)
-const token = ref()
+const spotifyToken = ref()
+const appleToken = ref()
 const disabled = computed(() => {
     return originService.value == '' && targetService.value == '' ? true : false
 })
-
-
 const loaded = ref(false)
 
 function determineService(link) {
@@ -33,8 +32,10 @@ function determineService(link) {
 
 function handleTokenLoad(event) {
     loaded.value = true
-    token.value = tokenStore.getSpotifyToken().value
+    appleToken.value = tokenStore.getAppleToken().value
+    spotifyToken.value = tokenStore.getSpotifyToken().value
 }
+
 function copy() {
     navigator.clipboard.writeText(translatedLink.value)
     copied.value = true
@@ -46,21 +47,27 @@ function copy() {
 
 // Triggers the API 
 async function parse() {
-    const {data} = await useFetch(`/api/parseSpotifyLink?uri=spotify.com/album/6JbGZGta38AArBgflt024C&token=${token.value}`)
-    //parse
-    const release = await data.value.release
-    const title = await release._value.title
-    const artists_array = await release._value.artists
-    const artists_names = ref([])
-    for(var a in artists_array){
-        let name = artists_array[a].name
-        artists_names.value.push(name)
+    if (targetService.value == "Spotify") {
+        const { data } = await useFetch(`/api/parseAppleLink?token=${appleToken.value}`)
     }
-    findRelease(artists_names.value[0], title)
-}   
+    if (targetService.value == "Apple") {
+        const { data } = await useFetch(`/api/parseSpotifyLink?uri=spotify.com/album/6JbGZGta38AArBgflt024C&token=${spotifyToken.value}`)
+        //parse
+        const release = await data.value.release
+        const title = await release._value.title
+        const artists_array = await release._value.artists
+        const artists_names = ref([])
+        for (var a in artists_array) {
+            let name = artists_array[a].name
+            artists_names.value.push(name)
+        }
+        findRelease(artists_names.value[0], title)
+    }
+
+}
 
 async function findRelease(artists, title) {
-    const data = await $fetch(`/api/getSpotifyLink?artist=${artists}&title=${title}&token=${token.value}`)
+    const data = await $fetch(`/api/getSpotifyLink?artist=${artists}&title=${title}&token=${spotifyToken.value}`)
     translatedLink.value = await data.link
 
 }

@@ -48,7 +48,7 @@ function copy() {
 // Triggers the API 
 async function parse() {
     if (targetService.value == "Spotify") {
-        const { data } = await useFetch(`/api/parseAppleLink?token=${appleToken.value}`)
+        const { data } = await useFetch(`/api/parseAppleLink?uri=${firstLinkValue.value}&token=${appleToken.value}`)
     }
     if (targetService.value == "Apple") {
         const { data } = await useFetch(`/api/parseSpotifyLink?uri=spotify.com/album/6JbGZGta38AArBgflt024C&token=${spotifyToken.value}`)

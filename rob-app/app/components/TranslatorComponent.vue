@@ -14,6 +14,12 @@ const disabled = computed(() => {
 })
 const loaded = ref(false)
 
+const artists = ref([])
+const appleReleaseId = ref('')
+const spotifyReleaseId = ref('')
+const originMarket = ref('')
+const targetMarket = ref('')
+
 function determineService(link) {
     const appleRegex = /(\bappl\w+\b)/g;
     const spotifyRegex = /(\bspotif\w+\b)/;
@@ -49,6 +55,8 @@ function copy() {
 async function parse() {
     if (targetService.value == "Spotify") {
         const { data } = await useFetch(`/api/parseAppleLink?uri=${firstLinkValue.value}&token=${appleToken.value}`)
+        console.log(await data.value.release._value.title)
+
     }
     if (targetService.value == "Apple") {
         const { data } = await useFetch(`/api/parseSpotifyLink?uri=spotify.com/album/6JbGZGta38AArBgflt024C&token=${spotifyToken.value}`)
@@ -83,7 +91,6 @@ watch(firstLinkValue, async (newLink, oldLink) => {
 <template>
     <TokenComponent @tokensStored="handleTokenLoad" />
     <div class="flex flex-col items-center justify-center gap-4 mt-5" v-if="loaded == true">
-
         <UInput placeholder="Paste Your Link Here" v-model="firstLinkValue" :onchange="determineService(firstLinkValue)"
             size="xl" class="w-full" />
         <UButton :onclick="parse" color="neutral" variant="soft" v-if="disabled" :disabled="disabled">Convert Your

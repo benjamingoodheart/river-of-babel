@@ -13,8 +13,8 @@ export default class ParserHelper{
             
             this.market = arr[1]
             this.releaseType = `${arr[2]}s`
-            this.releaseName = arr[3]
-            this.releaseId = arr[4]
+            //TODO: REGEX TO DROP ALBUMS WITH NAME IN TITLE
+            this.releaseId = arr[3]
         } 
         if(originService == 'Spotify'){
             releaseType = arr[1]
@@ -37,5 +37,8 @@ export default class ParserHelper{
     }
     getReleaseName(){
         return this.releaseName;
+    }
+    getReleaseId(){
+        return this.releaseId;
     }
 }

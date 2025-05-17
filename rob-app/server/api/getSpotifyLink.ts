@@ -13,10 +13,11 @@ export default defineEventHandler(async (event) => {
       Authorization: `Bearer ${query.token}`,
     },
   });
-
+  let art = await resp.data.albums.items[0].images[0].url
   let ret_link = await resp.data.albums.items[0].external_urls.spotify;
 
   return {
     link: ret_link,
+    albumArt: art
   };
 });

@@ -20,6 +20,7 @@ const appleReleaseId = ref('')
 const spotifyReleaseId = ref('')
 const originMarket = ref('')
 const targetMarket = ref('')
+const albumArt = ref('')
 
 function determineService(link) {
     const appleRegex = /(\bappl\w+\b)/g;
@@ -66,16 +67,16 @@ async function parse() {
         findSpotifyRelease(artists.value[0], releaseName.value)
     }
     if (targetService.value == "Apple") {
-        const { data } = await useFetch(`/api/parseSpotifyLink?uri=spotify.com/album/6JbGZGta38AArBgflt024C&token=${spotifyToken.value}`)
+        const { data } = await useFetch(`/api/parseSpotifyLink?uri=${firstLinkValue.value}&token=${spotifyToken.value}`)
         //parse
         const release = await data.value.release
-        const title = await release._value.title
+        releaseName.value = await release._value.title
         const artistsArray = await release._value.artists
         for (var a in artistsArray) {
             let name = artistsArray[a].name
             artists.value.push(name)
         }
-
+        findAppleRelease(artists.value[0], releaseName.value)
     }
 
 }
@@ -83,6 +84,14 @@ async function parse() {
 async function findSpotifyRelease(artistVal, title) {
     const data = await $fetch(`/api/getSpotifyLink?artist=${artistVal}&title=${title}&token=${spotifyToken.value}`)
     translatedLink.value = await data.link
+
+    albumArt.value = await data.albumArt
+}
+
+async function findAppleRelease(artistVal, title) {
+    const data = await $fetch(`/api/getAppleLink?artist=${artistVal}&title=${title}&token=${appleToken.value}`)
+    translatedLink.value = await data.link
+   
 }
 
 // Resets the button state on clear
@@ -90,6 +99,7 @@ watch(firstLinkValue, async (newLink, oldLink) => {
     if (newLink.length == 0) {
         originService.value = ''
         targetService.value = ''
+        translatedLink.value = ''
     }
 })
 
@@ -97,6 +107,7 @@ watch(firstLinkValue, async (newLink, oldLink) => {
 <template>
     <TokenComponent @tokensStored="handleTokenLoad" />
     <div class="flex flex-col items-center justify-center gap-4 mt-5" v-if="loaded == true">
+
         <UInput placeholder="Paste Your Link Here" v-model="firstLinkValue" :onchange="determineService(firstLinkValue)"
             size="xl" class="w-full" />
         <UButton :onclick="parse" color="neutral" variant="soft" v-if="disabled" :disabled="disabled">Convert Your
@@ -105,12 +116,15 @@ watch(firstLinkValue, async (newLink, oldLink) => {
             {{ targetService }} Link</UButton>
 
         <UCard v-if="translatedLink != ''" class="w-full text-center">
-            Artists: <span v-for="artist in artists">{{ artist}}<span v-if="artists.length > 1">, </span></span>
+            
             <UButton trailing="true" icon="material-symbols:content-copy-outline" :onclick="copy" v-if="!copied"
                 variant="ghost" size="xs" class="my-auto"> {{ translatedLink }} </UButton>
             <UButton trailing="true" icon="material-symbols:content-copy" :onclick="copy" v-if="copied" variant="ghost">
                 Copied! </UButton>
+
+            <!--<img :src=albumArt class="max-w-50 m-auto p-3">-->
         </UCard>
+        
     </div>
     <div class="flex flex-col items-center justify-center gap-4 mt-5" v-else>
         <USkeleton class="h-8 w-2/5"></USkeleton>

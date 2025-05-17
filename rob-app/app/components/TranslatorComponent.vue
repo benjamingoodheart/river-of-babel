@@ -15,6 +15,7 @@ const disabled = computed(() => {
 const loaded = ref(false)
 
 const artists = ref([])
+const releaseName = ref('')
 const appleReleaseId = ref('')
 const spotifyReleaseId = ref('')
 const originMarket = ref('')
@@ -53,32 +54,37 @@ function copy() {
 
 // Triggers the API 
 async function parse() {
+    artists.value = []
     if (targetService.value == "Spotify") {
         const { data } = await useFetch(`/api/parseAppleLink?uri=${firstLinkValue.value}&token=${appleToken.value}`)
-        console.log(await data.value.release._value.title)
-
+        releaseName.value = await data.value.release._value.title
+        const artistsArray = await data.value.release._value.artists
+        for (var a in artistsArray) {
+            let name = artistsArray[a]
+            artists.value.push(name)
+        }
+        findSpotifyRelease(artists.value[0], releaseName.value)
     }
     if (targetService.value == "Apple") {
         const { data } = await useFetch(`/api/parseSpotifyLink?uri=spotify.com/album/6JbGZGta38AArBgflt024C&token=${spotifyToken.value}`)
         //parse
         const release = await data.value.release
         const title = await release._value.title
-        const artists_array = await release._value.artists
-        const artists_names = ref([])
-        for (var a in artists_array) {
-            let name = artists_array[a].name
-            artists_names.value.push(name)
+        const artistsArray = await release._value.artists
+        for (var a in artistsArray) {
+            let name = artistsArray[a].name
+            artists.value.push(name)
         }
-        findRelease(artists_names.value[0], title)
+
     }
 
 }
 
-async function findRelease(artists, title) {
-    const data = await $fetch(`/api/getSpotifyLink?artist=${artists}&title=${title}&token=${spotifyToken.value}`)
+async function findSpotifyRelease(artistVal, title) {
+    const data = await $fetch(`/api/getSpotifyLink?artist=${artistVal}&title=${title}&token=${spotifyToken.value}`)
     translatedLink.value = await data.link
-
 }
+
 // Resets the button state on clear
 watch(firstLinkValue, async (newLink, oldLink) => {
     if (newLink.length == 0) {
@@ -99,7 +105,7 @@ watch(firstLinkValue, async (newLink, oldLink) => {
             {{ targetService }} Link</UButton>
 
         <UCard v-if="translatedLink != ''" class="w-full text-center">
-
+            Artists: <span v-for="artist in artists">{{ artist}}<span v-if="artists.length > 1">, </span></span>
             <UButton trailing="true" icon="material-symbols:content-copy-outline" :onclick="copy" v-if="!copied"
                 variant="ghost" size="xs" class="my-auto"> {{ translatedLink }} </UButton>
             <UButton trailing="true" icon="material-symbols:content-copy" :onclick="copy" v-if="copied" variant="ghost">

@@ -2,7 +2,8 @@ import fs from "node:fs";
 import crypto from "node:crypto";
 import * as jose from "jose";
 export default defineEventHandler(async (event) => {
-  const privateKey = fs.readFileSync("./AuthKey_792ZNGX3CU.p8");
+  const privateKey = process.env.VITE_APPLE_API_SECRET
+  //fs.readFileSync("./AuthKey_792ZNGX3CU.p8");
   const keyObject = crypto.createPrivateKey(privateKey);
   const epoch = Math.floor(Date.now() / 1000);
   let claims = {
@@ -16,7 +17,7 @@ export default defineEventHandler(async (event) => {
   const jwt = await new jose.SignJWT({})
     .setProtectedHeader({
       alg: "ES256",
-      kid: "792ZNGX3CU",
+      kid: process.env.VITE_APPLE_KID,
     })
     .setIssuer("RQM9MTR98R")
     .setIssuedAt()

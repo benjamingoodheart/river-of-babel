@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
       Authorization: `Bearer ${developerToken.value}`,
     },
   });
-
+  
   const resp = await axiosInstance
     .get(`albums?filter[equivalents]=${releaseId}`)
 

@@ -122,7 +122,6 @@ watch(firstLinkValue, async (newLink, oldLink) => {
             <UButton trailing="true" icon="material-symbols:content-copy" :onclick="copy" v-if="copied" variant="ghost">
                 Copied! </UButton>
 
-            <!--<img :src=albumArt class="max-w-50 m-auto p-3">-->
         </UCard>
         
     </div>

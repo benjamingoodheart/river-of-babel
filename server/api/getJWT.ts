@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import crypto from "node:crypto";
 import * as jose from "jose";
+
 export default defineEventHandler(async (event) => {
   const privateKey = process.env.VITE_APPLE_API_SECRET
   //fs.readFileSync("./AuthKey_792ZNGX3CU.p8");

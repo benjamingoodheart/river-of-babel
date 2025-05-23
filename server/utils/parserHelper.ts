@@ -11,8 +11,8 @@ export default class ParserHelper {
     arr = this.cleanArray(arr);
     this.originService = "Apple";
     if (originService == "Apple") {
-
-      if (!this.isSong(arr)) {
+      //TODO: SONG STUFF APPLE TO SPOTIFY
+      if (!this.isAppleSong(arr)) {
         /* Sometimes links have the album title in them, sometimes not
        * The block below handles that case
        */
@@ -29,12 +29,22 @@ export default class ParserHelper {
       }
     }
     if (originService == "Spotify") {
-      this.releaseType = arr[1];
+      if(this.isSpotifySong(arr)){
+        this.releaseType = "tracks";
+        let releaseArr = String(arr[2]).split("?si=");
+        this.releaseId = releaseArr[0]
+        this.trackId = releaseArr[1]
+       
+      }
+      else{
+      this.releaseType = "albums";
       this.releaseId = arr[2];
+      }
+
     }
   }
 
-  isSong(arr: Array) {
+  isAppleSong(arr: Array) {
     /**
      * songs are denoted the ?i= expression inbtwn the album id and the song id
      */
@@ -47,6 +57,15 @@ export default class ParserHelper {
     }
     if ((albumTrackArr.length = 1)) {
       return false;
+    }
+  }
+
+  isSpotifySong(arr:Array){
+    if(arr[1]==="track"){
+      return true
+    }
+    else{
+      return false
     }
   }
 

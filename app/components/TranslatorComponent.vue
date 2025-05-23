@@ -9,6 +9,7 @@ const targetService = ref('')
 const copied = ref(false)
 const spotifyToken = ref()
 const appleToken = ref()
+const releaseType = ref('')
 const disabled = computed(() => {
     return originService.value == '' && targetService.value == '' ? true : false
 })
@@ -71,12 +72,16 @@ async function parse() {
         //parse
         const release = await data.value.release
         releaseName.value = await release._value.title
+        let tempType = await release._value.type  
+        if (tempType === 'tracks'){
+            releaseType.value = "songs"
+        }
         const artistsArray = await release._value.artists
         for (var a in artistsArray) {
             let name = artistsArray[a].name
             artists.value.push(name)
         }
-        findAppleRelease(artists.value[0], releaseName.value)
+        findAppleRelease(artists.value[0], releaseName.value, releaseType.value)
     }
 
 }
@@ -88,8 +93,8 @@ async function findSpotifyRelease(artistVal, title) {
     albumArt.value = await data.albumArt
 }
 
-async function findAppleRelease(artistVal, title) {
-    const data = await $fetch(`/api/getAppleLink?artist=${artistVal}&title=${title}&token=${appleToken.value}`)
+async function findAppleRelease(artistVal, title, type) {
+    const data = await $fetch(`/api/getAppleLink?artist=${artistVal}&title=${title}&token=${appleToken.value}&releaseType=${type}`)
     translatedLink.value = await data.link
    
 }

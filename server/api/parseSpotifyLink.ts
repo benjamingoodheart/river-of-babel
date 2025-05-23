@@ -12,17 +12,22 @@ export default defineEventHandler(async (event) => {
   const arr = String(query.uri).split("/");
 
   const id = arr[2];
-
+  console.log(releaseType)
   //todo: determine if album song artist whatever
-  const resp = await axios.get(`https://api.spotify.com/v1/albums/${releaseId}`, {
+  const resp = await axios.get(`https://api.spotify.com/v1/${releaseType}/${releaseId}`, {
     headers: {
       Authorization: `Bearer ${query.token}`,
     },
   });
 
+  if(releaseType == "tracks"){
+    console.log(await resp.data.name)
+  }
+
   const release = ref({
     title: resp.data.name,
     artists: resp.data.artists,
+    type: releaseType
   });
 
   return { release: release };

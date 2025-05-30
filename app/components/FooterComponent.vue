@@ -1,4 +1,3 @@
-import { USeparator } from '../../.nuxt/components';
 <template>
     <UContainer class="flex flex-col items-center justify-center gap-2 mt-10">
         <USeparator/>

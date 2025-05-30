@@ -72,8 +72,8 @@ async function parse() {
         //parse
         const release = await data.value.release
         releaseName.value = await release._value.title
-        let tempType = await release._value.type  
-        if (tempType === 'tracks'){
+        let tempType = await release._value.type
+        if (tempType === 'tracks') {
             releaseType.value = "songs"
         }
         const artistsArray = await release._value.artists
@@ -96,7 +96,7 @@ async function findSpotifyRelease(artistVal, title) {
 async function findAppleRelease(artistVal, title, type) {
     const data = await $fetch(`/api/getAppleLink?artist=${artistVal}&title=${title}&token=${appleToken.value}&releaseType=${type}`)
     translatedLink.value = await data.link
-   
+
 }
 
 // Resets the button state on clear
@@ -121,14 +121,14 @@ watch(firstLinkValue, async (newLink, oldLink) => {
             {{ targetService }} Link</UButton>
 
         <UCard v-if="translatedLink != ''" class="w-full text-center">
-            
+
             <UButton trailing="true" icon="material-symbols:content-copy-outline" :onclick="copy" v-if="!copied"
                 variant="ghost" size="xs" class="my-auto"> {{ translatedLink }} </UButton>
             <UButton trailing="true" icon="material-symbols:content-copy" :onclick="copy" v-if="copied" variant="ghost">
                 Copied! </UButton>
 
         </UCard>
-        
+
     </div>
     <div class="flex flex-col items-center justify-center gap-4 mt-5" v-else>
         <USkeleton class="h-8 w-2/5"></USkeleton>

@@ -14,8 +14,8 @@ export default class ParserHelper {
       //TODO: SONG STUFF APPLE TO SPOTIFY
       if (!this.isAppleSong(arr)) {
         /* Sometimes links have the album title in them, sometimes not
-       * The block below handles that case
-       */
+         * The block below handles that case
+         */
         if (!this.hasAlbumTitle(arr)) {
           this.market = arr[1];
           this.releaseType = `${arr[2]}s`;
@@ -29,18 +29,15 @@ export default class ParserHelper {
       }
     }
     if (originService == "Spotify") {
-      if(this.isSpotifySong(arr)){
+      if (this.isSpotifySong(arr)) {
         this.releaseType = "tracks";
         let releaseArr = String(arr[2]).split("?si=");
-        this.releaseId = releaseArr[0]
-        this.trackId = releaseArr[1]
-       
+        this.releaseId = releaseArr[0];
+        this.trackId = releaseArr[1];
+      } else {
+        this.releaseType = "albums";
+        this.releaseId = arr[2];
       }
-      else{
-      this.releaseType = "albums";
-      this.releaseId = arr[2];
-      }
-
     }
   }
 
@@ -50,6 +47,17 @@ export default class ParserHelper {
      */
     let lastIndex = arr.length - 1;
     let albumTrackArr = String(arr[lastIndex]).split("?i=");
+
+    let mobileSuffix = /[?ls]/;
+    lastIndex = albumTrackArr.length - 1;
+
+    //handles ?ls which appears in mobile
+    if (String(albumTrackArr[lastIndex]).search(mobileSuffix) != -1) {
+      let cleanedIdArr = String(albumTrackArr[lastIndex]).split("?ls");
+      albumTrackArr[1] = cleanedIdArr[0];
+    }
+    console.log(albumTrackArr);
+
     if ((albumTrackArr.length = 2)) {
       this.trackId = albumTrackArr[1];
       this.releaseId = albumTrackArr[0];
@@ -60,12 +68,13 @@ export default class ParserHelper {
     }
   }
 
-  isSpotifySong(arr:Array){
-    if(arr[1]==="track"){
-      return true
-    }
-    else{
-      return false
+  isAppleMobile(arr: Array) {}
+
+  isSpotifySong(arr: Array) {
+    if (arr[1] === "track") {
+      return true;
+    } else {
+      return false;
     }
   }
 

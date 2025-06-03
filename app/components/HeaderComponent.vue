@@ -5,7 +5,8 @@
         <h1 class="font-bold text-2xl text-(--ui-primary)">
             River of Babel
         </h1>
-        <h2 class="text-sm">Translate one streaming source to another!</h2>
+        <img src="/riverofbabel_logo.svg" class="w-1/8">
+        <h2 class="text-sm text-center">Translate links between Apple Music and Spotify!</h2>
         <USeparator />
     </div>
 </template>

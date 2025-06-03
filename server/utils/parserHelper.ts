@@ -56,7 +56,7 @@ export default class ParserHelper {
       let cleanedIdArr = String(albumTrackArr[lastIndex]).split("?ls");
       albumTrackArr[1] = cleanedIdArr[0];
     }
-    console.log(albumTrackArr);
+
 
     if ((albumTrackArr.length = 2)) {
       this.trackId = albumTrackArr[1];

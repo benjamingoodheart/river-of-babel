@@ -1,27 +1,34 @@
 <script setup lang="ts">
-import { useTokenStore } from '../stores/tokenStore';
+import { useTokenStore, } from '../stores/tokenStore';
 
 const tokenStore = useTokenStore()
+
+//link consts
 const firstLinkValue = ref('')
 const translatedLink = ref('')
 const originService = ref('')
 const targetService = ref('')
-const copied = ref(false)
+
+//tokens
 const spotifyToken = ref()
 const appleToken = ref()
-const releaseType = ref('')
+
+//content states
+const hasError = ref(false)
+const copied = ref(false)
 const disabled = computed(() => {
     return originService.value == '' && targetService.value == '' ? true : false
 })
 const loaded = ref(false)
 
+//release consts
+const releaseType = ref('')
 const artists = ref([])
 const releaseName = ref('')
 const appleReleaseId = ref('')
 const spotifyReleaseId = ref('')
 const originMarket = ref('')
 const targetMarket = ref('')
-const albumArt = ref('')
 
 function determineService(link) {
     const appleRegex = /(\bappl\w+\b)/g;
@@ -58,30 +65,42 @@ function copy() {
 async function parse() {
     artists.value = []
     if (targetService.value == "Spotify") {
-        const { data } = await useFetch(`/api/parseAppleLink?uri=${firstLinkValue.value}&token=${appleToken.value}`)
-        releaseName.value = await data.value.release._value.title
-        const artistsArray = await data.value.release._value.artists
-        for (var a in artistsArray) {
-            let name = artistsArray[a]
-            artists.value.push(name)
+        const { data, status } = await useFetch(`/api/parseAppleLink?uri=${firstLinkValue.value}&token=${appleToken.value}`)
+        if (status._value == "error") {
+            hasError.value = true
         }
-        findSpotifyRelease(artists.value[0], releaseName.value)
+        if (status._value == "success") {
+            releaseName.value = await data.value.release._value.title
+            const artistsArray = await data.value.release._value.artists
+            for (var a in artistsArray) {
+                let name = artistsArray[a]
+                artists.value.push(name)
+            }
+            findSpotifyRelease(artists.value[0], releaseName.value)
+        }
     }
     if (targetService.value == "Apple") {
-        const { data } = await useFetch(`/api/parseSpotifyLink?uri=${firstLinkValue.value}&token=${spotifyToken.value}`)
-        //parse
-        const release = await data.value.release
-        releaseName.value = await release._value.title
-        let tempType = await release._value.type
-        if (tempType === 'tracks') {
-            releaseType.value = "songs"
+
+        const { data, status } = await useFetch(`/api/parseSpotifyLink?uri=${firstLinkValue.value}&token=${spotifyToken.value}`)
+
+        if (status._value == "error") {
+            hasError.value = true
         }
-        const artistsArray = await release._value.artists
-        for (var a in artistsArray) {
-            let name = artistsArray[a].name
-            artists.value.push(name)
+        if (status._value == "success") {
+            const release = await data.value.release
+            releaseName.value = await release._value.title
+            let tempType = await release._value.type
+            if (tempType === 'tracks') {
+                releaseType.value = "songs"
+            }
+            const artistsArray = await release._value.artists
+            for (var a in artistsArray) {
+                let name = artistsArray[a].name
+                artists.value.push(name)
+            }
+            findAppleRelease(artists.value[0], releaseName.value, releaseType.value)
         }
-        findAppleRelease(artists.value[0], releaseName.value, releaseType.value)
+
     }
 
 }
@@ -89,8 +108,6 @@ async function parse() {
 async function findSpotifyRelease(artistVal, title) {
     const data = await $fetch(`/api/getSpotifyLink?artist=${artistVal}&title=${title}&token=${spotifyToken.value}`)
     translatedLink.value = await data.link
-
-    albumArt.value = await data.albumArt
 }
 
 async function findAppleRelease(artistVal, title, type) {
@@ -101,12 +118,14 @@ async function findAppleRelease(artistVal, title, type) {
 
 // Resets the button state on clear
 watch(firstLinkValue, async (newLink, oldLink) => {
-    if (newLink.length == 0) {
-        originService.value = ''
-        targetService.value = ''
-        translatedLink.value = ''
-    }
+    hasError.value = false
+    originService.value = ''
+    targetService.value = ''
+    translatedLink.value = ''
+
 })
+
+
 
 </script>
 <template>
@@ -114,12 +133,21 @@ watch(firstLinkValue, async (newLink, oldLink) => {
     <div class="flex flex-col items-center justify-center gap-4 mt-5" v-if="loaded == true">
 
         <UInput placeholder="Paste Your Link Here" v-model="firstLinkValue" :onchange="determineService(firstLinkValue)"
-            size="xl" class="w-full" />
-        <UButton :onclick="parse" color="neutral" variant="soft" v-if="disabled" :disabled="disabled">Convert Your
-            Link</UButton>
+            size="xl" class="w-full" :class="{ 'focus-visible:ring-error': hasError }" ref="inputBox"
+            @keyup.enter="parse" />
+
+        <UTooltip text="Currently only supports Apple Music & Spotify.  Tidal compatibility coming soon!" :arrow="true">
+            <UButton :onclick="parse" color="neutral" variant="soft" v-if="disabled" :disabled="disabled">Convert Your
+                Link</UButton>
+        </UTooltip>
         <UButton :onclick="parse" color="primary" variant="soft" v-if="!disabled" :disabled="disabled">Get
             {{ targetService }} Link</UButton>
-
+        <UCard v-if="hasError" class="text-center shadow-xl">
+            <h3 class="text-lg text-red-500"><b>Error!</b></h3>
+            <p class="text-red-400 text-sm"> We can't find that release on {{ targetService }}. Please make sure you
+                have the correct URL and
+                try again.</p>
+        </UCard>
         <UCard v-if="translatedLink != ''" class="w-full text-center">
 
             <UButton trailing="true" icon="material-symbols:content-copy-outline" :onclick="copy" v-if="!copied"

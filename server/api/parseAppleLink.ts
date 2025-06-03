@@ -15,10 +15,13 @@ export default defineEventHandler(async (event) => {
       Authorization: `Bearer ${developerToken.value}`,
     },
   });
-
+  
   const resp = await axiosInstance.get(
     `albums?filter[equivalents]=${releaseId}`
-  );
+  ).catch((error)=>{
+    console.log(error)
+    ///something happens here
+  });
 
   const artistArray = String(
     await resp.data.data[0].attributes.artistName

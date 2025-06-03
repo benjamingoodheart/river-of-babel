@@ -2,12 +2,18 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
    app:{
-head: {
+    head: {
       title: 'River of Babel', // default fallback title
       htmlAttrs: {
         lang: 'en',
       }}
    } ,
+   seo: {
+    meta: {
+      description: 'Translate music streaming links.',
+      colorScheme: 'dark light',
+      author: 'Benjamin Goodheart'
+    }},
   modules: [
     '@nuxt/ui',
     '@nuxt/eslint',
@@ -16,8 +22,12 @@ head: {
     '@vueuse/nuxt',
     '@pinia/nuxt',
     '@pinia/colada-nuxt',
+    'nuxt-gtag',
+    '@nuxtjs/seo'
   ],
-
+  gtag: {
+    id: 'G-CD6BPEZN4W'
+  },
   css: ['~/assets/css/main.css'],
 
   future: {

@@ -1,6 +1,8 @@
-# Nuxt UI Starter
+# River of Babel
 
-Look at [Nuxt docs](https://nuxt.com/docs/getting-started/introduction) and [Nuxt UI docs](https://ui.nuxt.com) to learn more.
+Translate your favorite songs and album links between Apple Music & Spotify and vice-versa! 
+
+Built using [Nuxt](https://nuxt.com/).
 
 ## Setup
 

@@ -6,14 +6,12 @@ export default defineNuxtConfig({
       title: 'River of Babel', // default fallback title
       htmlAttrs: {
         lang: 'en',
-      }}
+      }},
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      ]
    } ,
-   seo: {
-    meta: {
-      description: 'Translate music streaming links.',
-      colorScheme: 'dark light',
-      author: 'Benjamin Goodheart'
-    }},
+
   modules: [
     '@nuxt/ui',
     '@nuxt/eslint',

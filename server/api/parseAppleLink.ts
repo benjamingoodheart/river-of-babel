@@ -18,18 +18,15 @@ export default defineEventHandler(async (event) => {
   
   const resp = await axiosInstance.get(
     `albums?filter[equivalents]=${releaseId}`
-  ).catch((error)=>{
-    console.log(error)
-    ///something happens here
-  });
+  )
 
   const artistArray = String(
     await resp.data.data[0].attributes.artistName
   ).split("&"); //splitting for multiple artists
-
   const releaseObj = ref({
     title: resp.data.data[0].attributes.name,
     artists: artistArray,
+    type: releaseType
   });
 
   return { release: releaseObj };

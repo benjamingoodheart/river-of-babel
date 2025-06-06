@@ -28,7 +28,7 @@ async function handleSpotifyTokens() {
     }
     if (isExpired) {
         const { status, data } = await useFetch('/api/getSpotifyToken')
-        let cleanToken = String(data.value.access_token)
+        let cleanToken = String(await data.value.access_token)
         store.setSpotifyToken(cleanToken)
         store.setSpotifyLastFetched(Date.now())
         spotifyTokenStored.value = true
@@ -37,8 +37,14 @@ async function handleSpotifyTokens() {
 
 watch(() => appleTokenStored.value === true && spotifyTokenStored.value === true, () => { emit('tokensStored') })
 
+try{
 await handleSpotifyTokens()
 await handleAppleTokens()
+} catch (err){
+    console.log(err)
+    window.location.reload()
+}
+
 
 </script>
 <template></template>

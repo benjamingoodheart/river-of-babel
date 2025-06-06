@@ -52,6 +52,7 @@ export default class ParserHelper {
     lastIndex = albumTrackArr.length - 1;
 
     //handles ?ls which appears in mobile
+
     if (String(albumTrackArr[lastIndex]).search(mobileSuffix) != -1) {
       let cleanedIdArr = String(albumTrackArr[lastIndex]).split("?ls");
       albumTrackArr[1] = cleanedIdArr[0];

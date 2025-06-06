@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useTokenStore, } from '../stores/tokenStore';
 
+
 const tokenStore = useTokenStore()
 
 //link consts
@@ -20,6 +21,7 @@ const disabled = computed(() => {
     return originService.value == '' && targetService.value == '' ? true : false
 })
 const loaded = ref(false)
+
 
 //release consts
 const releaseType = ref('')
@@ -65,13 +67,14 @@ function copy() {
 async function parse() {
     artists.value = []
     if (targetService.value == "Spotify") {
-        const { data, status } = await useFetch(`/api/parseAppleLink?uri=${firstLinkValue.value}&token=${appleToken.value}`)
-        if (status._value == "error") {
+        const { data, status, error } = await useFetch(`/api/parseAppleLink?uri=${firstLinkValue.value}&token=${appleToken.value}`)
+
+        if (status.value == "error") {
             hasError.value = true
-        }
-        if (status._value == "success") {
+        } else if (status.value == "success") {
             releaseName.value = await data.value.release._value.title
             const artistsArray = await data.value.release._value.artists
+
             for (var a in artistsArray) {
                 let name = artistsArray[a]
                 artists.value.push(name)
@@ -82,11 +85,10 @@ async function parse() {
     if (targetService.value == "Apple") {
 
         const { data, status } = await useFetch(`/api/parseSpotifyLink?uri=${firstLinkValue.value}&token=${spotifyToken.value}`)
-
-        if (status._value == "error") {
+        if (status.value == "error") {
             hasError.value = true
         }
-        if (status._value == "success") {
+        else if (status.value == "success") {
             const release = await data.value.release
             releaseName.value = await release._value.title
             let tempType = await release._value.type
@@ -105,7 +107,7 @@ async function parse() {
 
 }
 
-async function findSpotifyRelease(artistVal, title) {
+async function findSpotifyRelease(artistVal, title, type) {
     const data = await $fetch(`/api/getSpotifyLink?artist=${artistVal}&title=${title}&token=${spotifyToken.value}`)
     translatedLink.value = await data.link
 }
@@ -122,10 +124,7 @@ watch(firstLinkValue, async (newLink, oldLink) => {
     originService.value = ''
     targetService.value = ''
     translatedLink.value = ''
-
 })
-
-
 
 </script>
 <template>

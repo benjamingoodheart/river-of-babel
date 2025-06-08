@@ -54,21 +54,7 @@ export default class ParserHelper {
       } else {
         this.releaseType = "albums";
         this.releaseId = arr[2];
-      }
-      if (!this.isAppleSong(arr)) {
-        /* Sometimes links have the album title in them, sometimes not
-         * The block below handles that case
-         */
-        if (!this.hasAlbumTitle(arr)) {
-          this.market = arr[1];
-          this.releaseType = `${arr[2]}s`;
-          this.releaseId = arr[3];
-        }
-        if (this.hasAlbumTitle(arr)) {
-          this.market = arr[1];
-          this.releaseType = `${arr[2]}s`;
-          this.releaseId = arr[4];
-        }
+        console.log(this.releaseId)
       }
     }
   }

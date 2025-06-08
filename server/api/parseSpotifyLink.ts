@@ -9,21 +9,22 @@ export default defineEventHandler(async (event) => {
   const releaseType = parser.getReleaseType()
   const releaseId = parser.getReleaseId()
   
-  const arr = String(query.uri).split("/");
-
-  const id = arr[2];
   console.log(releaseType)
+  const arr = String(query.uri).split("/");
+  console.log(`https://api.spotify.com/v1/${releaseType}/${releaseId}`)
+  const id = arr[2];
+  console.log(arr)
   //todo: determine if album song artist whatever
   const resp = await axios.get(`https://api.spotify.com/v1/${releaseType}/${releaseId}`, {
     headers: {
       Authorization: `Bearer ${query.token}`,
     },
   });
-
+  await resp
   if(releaseType == "tracks"){
     console.log(await resp.data.name)
-  }
-
+  } 
+  console.log(await resp.data)
   const release = ref({
     title: resp.data.name,
     artists: resp.data.artists,

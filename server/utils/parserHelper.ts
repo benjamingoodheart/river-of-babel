@@ -5,13 +5,12 @@ export default class ParserHelper {
   public trackId: String;
   public releaseName: String;
   public originService: String;
-
+  //TODO: REFACTOR
   constructor(link: String, originService: String) {
     let arr = String(link).split("/");
     arr = this.cleanArray(arr);
     this.originService = "Apple";
     if (originService == "Apple") {
-      //TODO: SONG STUFF APPLE TO SPOTIFY
       if (!this.isAppleSong(arr)) {
         /* Sometimes links have the album title in them, sometimes not
          * The block below handles that case
@@ -27,14 +26,23 @@ export default class ParserHelper {
           this.releaseId = arr[4];
         }
       }
-      if (this.isAppleSong(arr)){
-        let lastIndex = arr.length - 1
-        console.log(arr)
-        let releaseArr = String(arr[lastIndex]).split("?i=")
-        console.log(releaseArr)
-        this.market = arr[1];
-        this.releaseType = `songs`;
-        this.releaseId = releaseArr[1]
+      if (this.isAppleSong(arr)) {
+        let lastIndex = arr.length - 1;
+        console.log(arr);
+        if (this.isAppleMobile(arr)) {
+          let tempArr = String(arr[lastIndex]).split("&ls");
+
+          let releaseArr = String(tempArr[0]).split("?i=");
+          console.log(releaseArr);
+          this.market = arr[1];
+          this.releaseType = `songs`;
+          this.releaseId = releaseArr[1];
+        } else {
+          let releaseArr = String(arr[lastIndex]).split("?i=");
+          this.market = arr[1];
+          this.releaseType = `songs`;
+          this.releaseId = releaseArr[1];
+        }
       }
     }
     if (originService == "Spotify") {
@@ -57,8 +65,6 @@ export default class ParserHelper {
     let lastIndex = arr.length - 1;
     let albumTrackArr = String(arr[lastIndex]).split("?i=");
     if ((albumTrackArr.length = 2)) {
-      this.trackId = albumTrackArr[1];
-      this.releaseId = albumTrackArr[0];
       return true;
     }
     if ((albumTrackArr.length = 1)) {
@@ -69,11 +75,10 @@ export default class ParserHelper {
   isAppleMobile(arr: Array) {
     let mobileSuffix = /[?ls]/;
     let lastIndex = arr.length - 1;
-   if (String(arr[lastIndex]).search(mobileSuffix) != -1) {
-      return true
+    if (String(arr[lastIndex]).search(mobileSuffix) != -1) {
+      return true;
     }
-    return false
-    
+    return false;
   }
 
   isSpotifySong(arr: Array) {
@@ -95,8 +100,8 @@ export default class ParserHelper {
 
   cleanArray(arr: Array) {
     //handle mobile
-    if (this.isAppleMobile(arr)){
-      let lastIndex = arr.length - 1
+    if (this.isAppleMobile(arr)) {
+      let lastIndex = arr.length - 1;
       let cleanedIdArr = String(arr[lastIndex]).split("?ls");
       arr[lastIndex] = cleanedIdArr[0];
     }

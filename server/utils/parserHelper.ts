@@ -55,6 +55,21 @@ export default class ParserHelper {
         this.releaseType = "albums";
         this.releaseId = arr[2];
       }
+      if (!this.isAppleSong(arr)) {
+        /* Sometimes links have the album title in them, sometimes not
+         * The block below handles that case
+         */
+        if (!this.hasAlbumTitle(arr)) {
+          this.market = arr[1];
+          this.releaseType = `${arr[2]}s`;
+          this.releaseId = arr[3];
+        }
+        if (this.hasAlbumTitle(arr)) {
+          this.market = arr[1];
+          this.releaseType = `${arr[2]}s`;
+          this.releaseId = arr[4];
+        }
+      }
     }
   }
 
@@ -64,10 +79,11 @@ export default class ParserHelper {
      */
     let lastIndex = arr.length - 1;
     let albumTrackArr = String(arr[lastIndex]).split("?i=");
-    if ((albumTrackArr.length = 2)) {
+    console.log(albumTrackArr)
+    if ((albumTrackArr.length == 2)) {
       return true;
     }
-    if ((albumTrackArr.length = 1)) {
+    if ((albumTrackArr.length == 1)) {
       return false;
     }
   }

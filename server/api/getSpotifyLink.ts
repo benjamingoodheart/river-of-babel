@@ -16,7 +16,6 @@ export default defineEventHandler(async (event) => {
   });
 
   if (type == "track") {
-
     let itemsArr = await resp.data.tracks.items;
     for (let item in itemsArr) {
       let tempName = itemsArr[item].artists[0].name;
@@ -27,10 +26,13 @@ export default defineEventHandler(async (event) => {
         };
       }
     }
-  } else {
+  } if (type == 'album') {
+    //maybe add timeout or something?
+    console.log(await resp.data)
     let ret_link = await resp.data.albums.items[0].external_urls.spotify;
+
     return {
-      link: await ret_link,
+      link: ret_link,
     };
   }
 

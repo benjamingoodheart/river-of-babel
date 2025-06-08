@@ -117,6 +117,10 @@ async function parse() {
 async function findSpotifyRelease(artistVal, title, type) {
     const data = await $fetch(`/api/getSpotifyLink?artist=${artistVal}&title=${title}&token=${spotifyToken.value}&releaseType=${type}`)
     translatedLink.value = await data.link
+    if (translatedLink.value == null) {
+        translatedLink.value = ''
+        hasError.value = true
+    }
 }
 
 async function findAppleRelease(artistVal, title, type) {
@@ -153,6 +157,9 @@ watch(firstLinkValue, async (newLink, oldLink) => {
             <p class="text-red-400 text-sm"> We can't find that release on {{ targetService }}. Please make sure you
                 have the correct URL and
                 try again.</p>
+            <br>
+            <p class="text-red-400 text-xs">If you have the correct URL, it may be that {{ targetService }} doesn't have
+                a match. This happens from time to time, and we are working to figure out why this occurs.</p>
         </UCard>
         <UCard v-if="translatedLink != ''" class="w-full text-center">
 

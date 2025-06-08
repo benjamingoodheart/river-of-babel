@@ -8,16 +8,16 @@ export default defineEventHandler(async (event) => {
   const developerToken = ref(query.token);
   const releaseType = parser.getReleaseType();
   const releaseId = parser.getReleaseId();
-
+  console.log(releaseType)
   const axiosInstance = axios.create({
     baseURL: "https://api.music.apple.com/v1/catalog/us/",
     headers: {
       Authorization: `Bearer ${developerToken.value}`,
     },
   });
-  
+
   const resp = await axiosInstance.get(
-    `albums?filter[equivalents]=${releaseId}`
+    `${releaseType}?filter[equivalents]=${releaseId}`
   )
 
   const artistArray = String(

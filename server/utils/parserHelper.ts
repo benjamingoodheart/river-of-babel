@@ -27,6 +27,15 @@ export default class ParserHelper {
           this.releaseId = arr[4];
         }
       }
+      if (this.isAppleSong(arr)){
+        let lastIndex = arr.length - 1
+        console.log(arr)
+        let releaseArr = String(arr[lastIndex]).split("?i=")
+        console.log(releaseArr)
+        this.market = arr[1];
+        this.releaseType = `songs`;
+        this.releaseId = releaseArr[1]
+      }
     }
     if (originService == "Spotify") {
       if (this.isSpotifySong(arr)) {
@@ -47,18 +56,6 @@ export default class ParserHelper {
      */
     let lastIndex = arr.length - 1;
     let albumTrackArr = String(arr[lastIndex]).split("?i=");
-
-    let mobileSuffix = /[?ls]/;
-    lastIndex = albumTrackArr.length - 1;
-
-    //handles ?ls which appears in mobile
-
-    if (String(albumTrackArr[lastIndex]).search(mobileSuffix) != -1) {
-      let cleanedIdArr = String(albumTrackArr[lastIndex]).split("?ls");
-      albumTrackArr[1] = cleanedIdArr[0];
-    }
-
-
     if ((albumTrackArr.length = 2)) {
       this.trackId = albumTrackArr[1];
       this.releaseId = albumTrackArr[0];
@@ -69,7 +66,15 @@ export default class ParserHelper {
     }
   }
 
-  isAppleMobile(arr: Array) {}
+  isAppleMobile(arr: Array) {
+    let mobileSuffix = /[?ls]/;
+    let lastIndex = arr.length - 1;
+   if (String(arr[lastIndex]).search(mobileSuffix) != -1) {
+      return true
+    }
+    return false
+    
+  }
 
   isSpotifySong(arr: Array) {
     if (arr[1] === "track") {
@@ -89,6 +94,12 @@ export default class ParserHelper {
   }
 
   cleanArray(arr: Array) {
+    //handle mobile
+    if (this.isAppleMobile(arr)){
+      let lastIndex = arr.length - 1
+      let cleanedIdArr = String(arr[lastIndex]).split("?ls");
+      arr[lastIndex] = cleanedIdArr[0];
+    }
     if (arr[0] == "https:") {
       arr.splice(0, 2);
       return arr;

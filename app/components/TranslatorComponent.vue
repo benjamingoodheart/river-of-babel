@@ -74,12 +74,19 @@ async function parse() {
         } else if (status.value == "success") {
             releaseName.value = await data.value.release._value.title
             const artistsArray = await data.value.release._value.artists
+            let tempType = await data.value.release._value.type
+            if (tempType === 'songs') {
+                releaseType.value = "track"
+                console.log(releaseType)
+            } else {
+                releaseType.value = "album"
+            }
 
             for (var a in artistsArray) {
                 let name = artistsArray[a]
                 artists.value.push(name)
             }
-            findSpotifyRelease(artists.value[0], releaseName.value)
+            findSpotifyRelease(artists.value[0], releaseName.value, releaseType.value)
         }
     }
     if (targetService.value == "Apple") {
@@ -108,7 +115,7 @@ async function parse() {
 }
 
 async function findSpotifyRelease(artistVal, title, type) {
-    const data = await $fetch(`/api/getSpotifyLink?artist=${artistVal}&title=${title}&token=${spotifyToken.value}`)
+    const data = await $fetch(`/api/getSpotifyLink?artist=${artistVal}&title=${title}&token=${spotifyToken.value}&releaseType=${type}`)
     translatedLink.value = await data.link
 }
 

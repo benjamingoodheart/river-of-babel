@@ -1,4 +1,5 @@
 <template>
+
   <UContainer class="w-sm">
     <HeaderComponent/>
     <Suspense>
@@ -6,4 +7,5 @@
     </Suspense>
     <FooterComponent/>
   </UContainer>
+  
 </template>

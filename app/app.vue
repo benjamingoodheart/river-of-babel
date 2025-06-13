@@ -5,7 +5,7 @@ useHead({
   }
 })</script>
 <template>
-  <UApp>
+  <UApp :toaster="{position: 'bottom-center'}">
     <NuxtPage />
   </UApp>
 </template>

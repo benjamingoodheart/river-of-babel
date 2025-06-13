@@ -54,7 +54,6 @@ export default class ParserHelper {
       } else {
         this.releaseType = "albums";
         this.releaseId = arr[2];
-        console.log(this.releaseId)
       }
     }
   }

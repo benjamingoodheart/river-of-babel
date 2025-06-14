@@ -180,6 +180,8 @@ watch(firstLinkValue, async (newLink, oldLink) => {
     hasError.value = false
     originService.value = ''
     targetService.value = ''
+    releaseName.value = ''
+    artists.value = []
     translatedLink.value = ''
 })
 

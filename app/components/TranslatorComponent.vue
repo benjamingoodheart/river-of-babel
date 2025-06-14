@@ -15,7 +15,7 @@ const spotifyToken = ref()
 const appleToken = ref()
 
 //content states
-const hasError = ref(false)
+const hasError = ref(null)
 const copied = ref(false)
 const disabled = computed(() => {
     return originService.value == '' && targetService.value == '' ? true : false
@@ -38,11 +38,11 @@ function determineService(link) {
     const str = link;
 
     if (str.search(appleRegex) != -1) {
-        originService.value = "Apple"
+        originService.value = "Apple Music"
         targetService.value = "Spotify"
     } else if (str.search(spotifyRegex) != -1) {
         originService.value = "Spotify"
-        targetService.value = "Apple"
+        targetService.value = "Apple Music"
     } else {
         return -1
     }
@@ -86,7 +86,7 @@ function showErrorToast() {
 function showFoundToast() {
     toast.add({
         id: 'foundConfirm',
-        title: `Successfully found ${releaseName.value} !!!`,
+        title: `Successfully found ${releaseName.value}!`,
         color: 'success',
         description: `Good news! We found ${releaseName.value} by ${artists.value[0]} on ${targetService.value}`,
         icon: 'material-symbols:celebration-outline-rounded'
@@ -112,7 +112,6 @@ async function parse() {
             let tempType = await data.value.release._value.type
             if (tempType === 'songs') {
                 releaseType.value = "track"
-                console.log(releaseType)
             } else {
                 releaseType.value = "album"
             }
@@ -125,7 +124,7 @@ async function parse() {
         }
 
     }
-    if (targetService.value == "Apple") {
+    if (targetService.value == "Apple Music") {
 
         const { data, status } = await useFetch(`/api/parseSpotifyLink?uri=${firstLinkValue.value}&token=${spotifyToken.value}`)
         if (status.value == "error") {
@@ -149,12 +148,15 @@ async function parse() {
     }
 
     setTimeout(() => clearSearchToast(), 1000)
-    if (!hasError) {
-        setTimeout(() => showFoundToast(), 500)
-    } else {
-        setTimeout(() => showErrorToast())
-    }
 
+    setTimeout(() => {
+        if (hasError.value == false) {
+            showFoundToast()
+        }
+        if (hasError.value == true) {
+            showErrorToast()
+        }
+    }, 500)
 
 }
 
@@ -198,13 +200,16 @@ watch(firstLinkValue, async (newLink, oldLink) => {
             :disabled="disabled">Get
             {{ targetService }} Link</UButton>
         <UCard v-if="hasError" class="text-center shadow-xl">
+
             <h3 class="text-lg text-red-500"><b>Error!</b></h3>
 
             <p class="text-red-400 text-xs">If you have the correct URL, it may be that {{ targetService }} doesn't have
                 a match. This happens from time to time, and we are working to figure out why this occurs.</p>
         </UCard>
         <UCard v-if="translatedLink != ''" class="w-full text-center">
-
+            <template #header v-if="releaseName != ''">
+                <h1 class="text-sm">{{ releaseName }} by <span v-for="artist in artists">{{ artist }}</span></h1>
+            </template>
             <UButton trailing="true" icon="material-symbols:content-copy-outline" :onclick="copy" v-if="!copied"
                 variant="ghost" size="xs" class="my-auto"> {{ translatedLink }} </UButton>
             <UButton trailing="true" icon="material-symbols:content-copy" :onclick="copy" v-if="copied" variant="ghost">

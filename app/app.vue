@@ -1,7 +1,7 @@
 <script setup>
 useHead({
   titleTemplate: (titleChunk) => {
-    return titleChunk ? `${titleChunk}` : 'River ff Babel';
+    return titleChunk ? `${titleChunk}` : 'River of Babel';
   }
 })</script>
 <template>

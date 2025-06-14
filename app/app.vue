@@ -1,11 +1,11 @@
 <script setup>
 useHead({
   titleTemplate: (titleChunk) => {
-    return titleChunk ? `${titleChunk}` : 'River ff Babel';
+    return titleChunk ? `${titleChunk}` : 'River of Babel';
   }
 })</script>
 <template>
-  <UApp>
+  <UApp :toaster="{position: 'bottom-center'}">
     <NuxtPage />
   </UApp>
 </template>

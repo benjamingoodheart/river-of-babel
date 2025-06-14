@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useTokenStore, } from '../stores/tokenStore';
-
+import { useTokenStore } from '../stores/tokenStore';
+const toast = useToast()
 
 const tokenStore = useTokenStore()
 
@@ -15,7 +15,7 @@ const spotifyToken = ref()
 const appleToken = ref()
 
 //content states
-const hasError = ref(false)
+const hasError = ref(null)
 const copied = ref(false)
 const disabled = computed(() => {
     return originService.value == '' && targetService.value == '' ? true : false
@@ -38,11 +38,11 @@ function determineService(link) {
     const str = link;
 
     if (str.search(appleRegex) != -1) {
-        originService.value = "Apple"
+        originService.value = "Apple Music"
         targetService.value = "Spotify"
     } else if (str.search(spotifyRegex) != -1) {
         originService.value = "Spotify"
-        targetService.value = "Apple"
+        targetService.value = "Apple Music"
     } else {
         return -1
     }
@@ -63,8 +63,43 @@ function copy() {
     }, 2000)
 }
 
+function showSearchToast() {
+    toast.add({
+        id: 'fetchConfirm',
+        title: 'Fetching..',
+        description: `Seaching ${targetService.value}....`,
+        color: 'info',
+        icon: 'material-symbols:search'
+    })
+}
+
+function showErrorToast() {
+    toast.add({
+        title: `Error finding ${releaseName.value} on ${targetService.value}`,
+        description: `We can't find that release on ${targetService.value}. Please make sure you have the correct URL and try again. Occasionally we won't be able to find the right match even if it exists on ${targetService.value}. We are actively working on this bug.`,
+        color: 'error',
+        duration: 15000,
+        icon: 'material-symbols:error-circle-rounded-sharp',
+    })
+}
+
+function showFoundToast() {
+    toast.add({
+        id: 'foundConfirm',
+        title: `Successfully found ${releaseName.value}!`,
+        color: 'success',
+        description: `Good news! We found ${releaseName.value} by ${artists.value[0]} on ${targetService.value}`,
+        icon: 'material-symbols:celebration-outline-rounded'
+    })
+}
+
+function clearSearchToast() {
+    toast.remove('fetchConfirm')
+}
+
 // Triggers the API 
 async function parse() {
+    showSearchToast()
     artists.value = []
     if (targetService.value == "Spotify") {
         const { data, status, error } = await useFetch(`/api/parseAppleLink?uri=${firstLinkValue.value}&token=${appleToken.value}`)
@@ -77,7 +112,6 @@ async function parse() {
             let tempType = await data.value.release._value.type
             if (tempType === 'songs') {
                 releaseType.value = "track"
-                console.log(releaseType)
             } else {
                 releaseType.value = "album"
             }
@@ -88,8 +122,9 @@ async function parse() {
             }
             findSpotifyRelease(artists.value[0], releaseName.value, releaseType.value)
         }
+
     }
-    if (targetService.value == "Apple") {
+    if (targetService.value == "Apple Music") {
 
         const { data, status } = await useFetch(`/api/parseSpotifyLink?uri=${firstLinkValue.value}&token=${spotifyToken.value}`)
         if (status.value == "error") {
@@ -111,6 +146,17 @@ async function parse() {
         }
 
     }
+
+    setTimeout(() => clearSearchToast(), 1000)
+
+    setTimeout(() => {
+        if (hasError.value == false) {
+            showFoundToast()
+        }
+        if (hasError.value == true) {
+            showErrorToast()
+        }
+    }, 500)
 
 }
 
@@ -134,6 +180,8 @@ watch(firstLinkValue, async (newLink, oldLink) => {
     hasError.value = false
     originService.value = ''
     targetService.value = ''
+    releaseName.value = ''
+    artists.value = []
     translatedLink.value = ''
 })
 
@@ -150,19 +198,20 @@ watch(firstLinkValue, async (newLink, oldLink) => {
             <UButton :onclick="parse" color="neutral" variant="soft" v-if="disabled" :disabled="disabled">Convert Your
                 Link</UButton>
         </UTooltip>
-        <UButton :onclick="parse" color="primary" variant="soft" v-if="!disabled" :disabled="disabled">Get
+        <UButton :onclick="parse" class="active:bg-primary-800" color="primary" variant="soft" v-if="!disabled"
+            :disabled="disabled">Get
             {{ targetService }} Link</UButton>
         <UCard v-if="hasError" class="text-center shadow-xl">
+
             <h3 class="text-lg text-red-500"><b>Error!</b></h3>
-            <p class="text-red-400 text-sm"> We can't find that release on {{ targetService }}. Please make sure you
-                have the correct URL and
-                try again.</p>
-            <br>
+
             <p class="text-red-400 text-xs">If you have the correct URL, it may be that {{ targetService }} doesn't have
                 a match. This happens from time to time, and we are working to figure out why this occurs.</p>
         </UCard>
         <UCard v-if="translatedLink != ''" class="w-full text-center">
-
+            <template #header v-if="releaseName != ''">
+                <h1 class="text-sm">{{ releaseName }} by <span v-for="artist in artists">{{ artist }}</span></h1>
+            </template>
             <UButton trailing="true" icon="material-symbols:content-copy-outline" :onclick="copy" v-if="!copied"
                 variant="ghost" size="xs" class="my-auto"> {{ translatedLink }} </UButton>
             <UButton trailing="true" icon="material-symbols:content-copy" :onclick="copy" v-if="copied" variant="ghost">

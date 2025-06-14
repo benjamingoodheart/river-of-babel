@@ -1,5 +1,5 @@
 <template>
-  <UContainer class="md:w-md sm:w-sm" >
+  <UContainer class="w-sm md:w-md"  >
     <HeaderComponent/>
     <Suspense>
     <TranslatorComponent/>

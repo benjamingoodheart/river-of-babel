@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { useTokenStore } from '../stores/tokenStore';
+import { useStorage } from '@vueuse/core'
+
 const toast = useToast()
 
 const tokenStore = useTokenStore()
@@ -21,6 +23,7 @@ const disabled = computed(() => {
     return originService.value == '' && targetService.value == '' ? true : false
 })
 const loaded = ref(false)
+const recentLinks = useStorage('recent-links', {links: ['']})
 
 
 //release consts
@@ -160,19 +163,24 @@ async function parse() {
 
 }
 
+//TODO: Implement retrieveLink in the RecentLinksComponent.vue component
+function storeLink(link){
+    recentLinks.value.links.push(link)
+}
+
 async function findSpotifyRelease(artistVal, title, type) {
     const data = await $fetch(`/api/getSpotifyLink?artist=${artistVal}&title=${title}&token=${spotifyToken.value}&releaseType=${type}`)
     translatedLink.value = await data.link
-    if (translatedLink.value == null) {
+    
+    if (await translatedLink.value == null) {
         translatedLink.value = ''
         hasError.value = true
     }
-}
+}   
 
 async function findAppleRelease(artistVal, title, type) {
     const data = await $fetch(`/api/getAppleLink?artist=${artistVal}&title=${title}&token=${appleToken.value}&releaseType=${type}`)
     translatedLink.value = await data.link
-
 }
 
 // Resets the button state on clear

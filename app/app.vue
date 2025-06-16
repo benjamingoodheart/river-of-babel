@@ -1,4 +1,7 @@
 <script setup>
+defineOgImageComponent('NuxtSeo', {
+  colorMode: 'dark'
+})
 useHead({
   titleTemplate: (titleChunk) => {
     return titleChunk ? `${titleChunk}` : 'River of Babel';

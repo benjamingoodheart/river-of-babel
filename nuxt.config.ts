@@ -1,6 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  site:{
+    url: 'https://www.riverofbabel.app',
+    name: 'River of Babel',
+    description: 'Translate links from Apple Music to Spotify and vice-versa!',
+
+  }, 
    app:{
     head: {
       title: 'River of Babel', // default fallback title

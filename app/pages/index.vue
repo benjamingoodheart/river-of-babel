@@ -1,6 +1,3 @@
-<script setup>
-
-</script>
 <template>
   <UContainer class="w-sm md:w-md"  >
     <HeaderComponent/>

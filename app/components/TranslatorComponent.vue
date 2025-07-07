@@ -23,7 +23,7 @@ const disabled = computed(() => {
     return originService.value == '' && targetService.value == '' ? true : false
 })
 const loaded = ref(false)
-const recentLinks = useStorage('recent-links', {links: ['']})
+const recentLinks = useStorage('recent-links', {links: []})
 
 
 //release consts
@@ -164,8 +164,9 @@ async function parse() {
 }
 
 //TODO: Implement retrieveLink in the RecentLinksComponent.vue component
-function storeLink(link){
-    recentLinks.value.links.push(link)
+function storeLink(originLink,translatedLink){
+    let obj = {"origin": originLink, "translatedLink": translatedLink, "artists": artists.value, "release": releaseName.value }
+    recentLinks.value.links.push(obj)
 }
 
 async function findSpotifyRelease(artistVal, title, type) {
@@ -176,6 +177,7 @@ async function findSpotifyRelease(artistVal, title, type) {
         translatedLink.value = ''
         hasError.value = true
     }
+    storeLink(firstLinkValue, translatedLink)
 }   
 
 async function findAppleRelease(artistVal, title, type) {

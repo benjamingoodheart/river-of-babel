@@ -23,7 +23,7 @@ const disabled = computed(() => {
     return originService.value == '' && targetService.value == '' ? true : false
 })
 const loaded = ref(false)
-const recentLinks = useStorage('recent-links', {links: []})
+const recentLinks = useStorage('recent-links', {links: {}})
 
 
 //release consts
@@ -165,8 +165,12 @@ async function parse() {
 
 //TODO: Implement retrieveLink in the RecentLinksComponent.vue component
 function storeLink(originLink,translatedLink){
-    let obj = {"origin": originLink, "translatedLink": translatedLink, "artists": artists.value, "release": releaseName.value }
-    recentLinks.value.links.push(obj)
+    const id = self.crypto.randomUUID()
+    const obj = { "origin": originLink, "translatedLink": translatedLink, "artists": artists.value, "release": releaseName.value }
+
+    recentLinks.value.links[id]= obj
+           
+
 }
 
 async function findSpotifyRelease(artistVal, title, type) {

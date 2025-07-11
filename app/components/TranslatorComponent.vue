@@ -181,12 +181,14 @@ async function findSpotifyRelease(artistVal, title, type) {
         translatedLink.value = ''
         hasError.value = true
     }
-    storeLink(firstLinkValue, translatedLink)
+    //storeLink(firstLinkValue, translatedLink)
 }   
 
 async function findAppleRelease(artistVal, title, type) {
     const data = await $fetch(`/api/getAppleLink?artist=${artistVal}&title=${title}&token=${appleToken.value}&releaseType=${type}`)
     translatedLink.value = await data.link
+
+    //storeLink(firstLinkValue, translatedLink)
 }
 
 // Resets the button state on clear

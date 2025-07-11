@@ -4,6 +4,7 @@
     <Suspense>
     <TranslatorComponent/>
     </Suspense>
+
     <FooterComponent/>
   </UContainer>
 </template>

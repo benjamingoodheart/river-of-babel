@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
   }
   if (type == "album") {
     //add artists fallback for external urls
-    console.log(await resp.data.artists.items)
+    await resp.data.artists.items
     let itemsArr = await resp.data.albums.items;
     for (let item in itemsArr) {
       let tempName = await itemsArr[item].name;

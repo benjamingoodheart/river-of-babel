@@ -3,14 +3,25 @@ import { useStorage } from '@vueuse/core'
 
 const recentLinksStorage = useStorage('recent-links')
 
-const copied = ref(false)
+const linkState = ref({"copied": false, "id": ''})
+
+
 function copy(link) {
     navigator.clipboard.writeText(link.translatedLink)
-    copied.value = true
+    linkState.value.copied = true
+    linkState.value.id = link.id
+    
 
     setTimeout(() => {
-        copied.value = false
+        linkState.value.copied = false
+        linkState.value.id = ''
     }, 2000)
+}
+
+function clear(){
+    if(recentLinksStorage._rawValue){
+        recentLinksStorage.value = null
+    }
 }
 
 const recentLinksObj = computed(()=> {
@@ -27,12 +38,14 @@ watch(recentLinksStorage,()=>{
 </script>
 <template>
 <UPopover>
-    <UButton label="Recent Links" color="neutral" variant="subtle" trailing-icon="i-lucide-chevron-up" />
+    <UButton label="Recent Links" size="xs" color="neutral" variant="subtle" trailing-icon="i-lucide-chevron-down" />
     <template #content>
       <UCard>
+        <UButton @click="clear()">Clear</UButton>
         <div class="grid">
-            <div class="row-span-12" v-for="link in recentLinksObj.links"> 
-                <UButton variant="link" icon="material-symbols:content-copy-outline" @click="copy(link)"> <span v-if="!copied"> {{recentLinksObj.links[link]}} {{link.artists[0]}} - {{link.release}} </span> </UButton>
+            <div class="row-span-12" v-for="(link,index) in recentLinksObj.links" :key="index"> 
+                <!--Still need to figure out copying behavior-->
+                <UButton variant="link" icon="material-symbols:content-copy-outline" @click="copy(link)" > <span v-if="!linkState.copied">{{link.artists[0]}} - {{link.release}} </span> </UButton>
             </div>
         </div>
       </UCard>

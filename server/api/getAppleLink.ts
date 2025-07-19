@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
   const resp = await axiosInstance.get(
     `search?types=albums,songs,artists&term=${artist}+${title}`
   );
-  console.log()
+  
   if(type == "songs"){
   href.value = await resp.data.results.songs.data[0].attributes.url
   } else{

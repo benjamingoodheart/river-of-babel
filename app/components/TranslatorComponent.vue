@@ -163,15 +163,6 @@ async function parse() {
 
 }
 
-//TODO: Implement retrieveLink in the RecentLinksComponent.vue component
-function storeLink(originLink,translatedLink){
-    const id = self.crypto.randomUUID()
-    const obj = { "origin": originLink, "translatedLink": translatedLink, "artists": artists.value, "release": releaseName.value }
-
-    recentLinks.value.links[id]= obj
-           
-
-}
 
 async function findSpotifyRelease(artistVal, title, type) {
     const data = await $fetch(`/api/getSpotifyLink?artist=${artistVal}&title=${title}&token=${spotifyToken.value}&releaseType=${type}`)
@@ -181,14 +172,14 @@ async function findSpotifyRelease(artistVal, title, type) {
         translatedLink.value = ''
         hasError.value = true
     }
-    //storeLink(firstLinkValue, translatedLink)
+
 }   
 
 async function findAppleRelease(artistVal, title, type) {
     const data = await $fetch(`/api/getAppleLink?artist=${artistVal}&title=${title}&token=${appleToken.value}&releaseType=${type}`)
     translatedLink.value = await data.link
 
-    //storeLink(firstLinkValue, translatedLink)
+
 }
 
 // Resets the button state on clear
@@ -226,15 +217,15 @@ watch(firstLinkValue, async (newLink, oldLink) => {
         </UCard>
         <UCard v-if="translatedLink != ''" class="w-full text-center">
             <template #header v-if="releaseName != ''">
-                <h1 class="text-sm">{{ releaseName }} by <span v-for="artist in artists">{{ artist }}</span></h1>
+                <h1 class="text-sm">{{ releaseName }} by <span v-for="(artist, index) in artists">{{ artist.trim() }}<span v-if="index+1<artists.length">, </span></span></h1>
             </template>
+
             <UButton trailing="true" icon="material-symbols:content-copy-outline" :onclick="copy" v-if="!copied"
                 variant="ghost" size="xs" class="my-auto"> {{ translatedLink }} </UButton>
             <UButton trailing="true" icon="material-symbols:content-copy" :onclick="copy" v-if="copied" variant="ghost">
                 Copied! </UButton>
 
         </UCard>
-
     </div>
     <div class="flex flex-col items-center justify-center gap-4 mt-5" v-else>
         <USkeleton class="h-8 w-2/5"></USkeleton>

@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   //call spotify api
   console.log(type);
   const endpoint = `https://api.spotify.com/v1/search?q=${title}%2520artist%3A${artist}&type=${type}%2Cartist`;
-  console.log(endpoint)
+  console.log(endpoint);
   const resp = await axios.get(endpoint, {
     headers: {
       Authorization: `Bearer ${query.token}`,
@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
   }
   if (type == "album") {
     //add artists fallback for external urls
-    await resp.data.artists.items
+    await resp.data.artists.items;
     let itemsArr = await resp.data.albums.items;
     for (let item in itemsArr) {
       let tempName = await itemsArr[item].name;
@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
           link: await ret_link,
         };
       }
-    } 
+    }
   }
 
   return {

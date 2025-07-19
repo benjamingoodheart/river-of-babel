@@ -217,7 +217,7 @@ watch(firstLinkValue, async (newLink, oldLink) => {
         </UCard>
         <UCard v-if="translatedLink != ''" class="w-full text-center">
             <template #header v-if="releaseName != ''">
-                <h1 class="text-sm">{{ releaseName }} by <span v-for="artist in artists">{{ artist }}</span></h1>
+                <h1 class="text-sm">{{ releaseName }} by <span v-for="(artist, index) in artists">{{ artist.trim() }}<span v-if="index+1<artists.length">, </span></span></h1>
             </template>
 
             <UButton trailing="true" icon="material-symbols:content-copy-outline" :onclick="copy" v-if="!copied"

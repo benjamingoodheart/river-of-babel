@@ -1,41 +1,39 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  site:{
-    url: 'https://www.riverofbabel.app',
-    name: 'River of Babel',
-    description: 'Translate links from Apple Music to Spotify and vice-versa!',
-
-  }, 
-   app:{
+  site: {
+    url: "https://www.riverofbabel.app",
+    name: "River of Babel",
+    description: "Translate links from Apple Music to Spotify and vice-versa!",
+  },
+  app: {
     head: {
-      title: 'River of Babel', // default fallback title
+      title: "River of Babel", // default fallback title
       htmlAttrs: {
-        lang: 'en',
-      }},
-      link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      ]
-   } ,
+        lang: "en",
+      },
+    },
+    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+  },
 
   modules: [
-    '@nuxt/ui',
-    '@nuxt/eslint',
-    '@nuxt/icon',
-    '@nuxt/fonts',
-    '@vueuse/nuxt',
-    '@pinia/nuxt',
-    '@pinia/colada-nuxt',
-    'nuxt-gtag',
-    '@nuxtjs/seo'
+    "@nuxt/ui",
+    "@nuxt/eslint",
+    "@nuxt/icon",
+    "@nuxt/fonts",
+    "@vueuse/nuxt",
+    "@pinia/nuxt",
+    "@pinia/colada-nuxt",
+    "nuxt-gtag",
+    "@nuxtjs/seo",
   ],
   gtag: {
-    id: 'G-CD6BPEZN4W'
+    id: "G-CD6BPEZN4W",
   },
-  css: ['~/assets/css/main.css'],
+  css: ["~/assets/css/main.css"],
 
   future: {
-    compatibilityVersion: 4
+    compatibilityVersion: 4,
   },
-  compatibilityDate: '2024-11-27'
-})
+  compatibilityDate: "2024-11-27",
+});

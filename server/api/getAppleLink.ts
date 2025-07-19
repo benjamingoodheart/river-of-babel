@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
   const title = encodeURIComponent(query.title);
   const artist = encodeURIComponent(query.artist);
   const developerToken = ref(query.token);
-  const type = encodeURIComponent(query.releaseType)
+  const type = encodeURIComponent(query.releaseType);
   const href = ref("");
   const axiosInstance = axios.create({
     baseURL: "https://api.music.apple.com/v1/catalog/us/",
@@ -16,11 +16,11 @@ export default defineEventHandler(async (event) => {
   const resp = await axiosInstance.get(
     `search?types=albums,songs,artists&term=${artist}+${title}`
   );
-  
-  if(type == "songs"){
-  href.value = await resp.data.results.songs.data[0].attributes.url
-  } else{
-  href.value = await resp.data.results.albums.data[0].attributes.url;
+
+  if (type == "songs") {
+    href.value = await resp.data.results.songs.data[0].attributes.url;
+  } else {
+    href.value = await resp.data.results.albums.data[0].attributes.url;
   }
   return {
     link: `${href.value}`,

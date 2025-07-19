@@ -64,11 +64,11 @@ export default class ParserHelper {
      */
     let lastIndex = arr.length - 1;
     let albumTrackArr = String(arr[lastIndex]).split("?i=");
-    console.log(albumTrackArr)
-    if ((albumTrackArr.length == 2)) {
+    console.log(albumTrackArr);
+    if (albumTrackArr.length == 2) {
       return true;
     }
-    if ((albumTrackArr.length == 1)) {
+    if (albumTrackArr.length == 1) {
       return false;
     }
   }

@@ -163,8 +163,6 @@ async function parse() {
 
 }
 
-<<<<<<< HEAD
-=======
 //TODO: Implement retrieveLink in the RecentLinksComponent.vue component
 function storeLink(originLink,translatedLink){
     const id = self.crypto.randomUUID()
@@ -174,7 +172,6 @@ function storeLink(originLink,translatedLink){
            
 
 }
->>>>>>> parent of b773458 (#4)
 
 async function findSpotifyRelease(artistVal, title, type) {
     const data = await $fetch(`/api/getSpotifyLink?artist=${artistVal}&title=${title}&token=${spotifyToken.value}&releaseType=${type}`)
@@ -184,22 +181,14 @@ async function findSpotifyRelease(artistVal, title, type) {
         translatedLink.value = ''
         hasError.value = true
     }
-<<<<<<< HEAD
-
-=======
     //storeLink(firstLinkValue, translatedLink)
->>>>>>> parent of b773458 (#4)
 }   
 
 async function findAppleRelease(artistVal, title, type) {
     const data = await $fetch(`/api/getAppleLink?artist=${artistVal}&title=${title}&token=${appleToken.value}&releaseType=${type}`)
     translatedLink.value = await data.link
 
-<<<<<<< HEAD
-
-=======
     //storeLink(firstLinkValue, translatedLink)
->>>>>>> parent of b773458 (#4)
 }
 
 // Resets the button state on clear

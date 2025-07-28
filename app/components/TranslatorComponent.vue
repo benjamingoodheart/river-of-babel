@@ -234,10 +234,6 @@ watch(firstLinkValue, async (newLink, oldLink) => {
                 Copied! </UButton>
 
         </UCard>
-<<<<<<< HEAD
-=======
-
->>>>>>> parent of b773458 (#4)
     </div>
     <div class="flex flex-col items-center justify-center gap-4 mt-5" v-else>
         <USkeleton class="h-8 w-2/5"></USkeleton>

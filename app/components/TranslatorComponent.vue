@@ -181,14 +181,14 @@ async function findSpotifyRelease(artistVal, title, type) {
         translatedLink.value = ''
         hasError.value = true
     }
-    //storeLink(firstLinkValue, translatedLink)
+    storeLink(firstLinkValue, translatedLink)
 }   
 
 async function findAppleRelease(artistVal, title, type) {
     const data = await $fetch(`/api/getAppleLink?artist=${artistVal}&title=${title}&token=${appleToken.value}&releaseType=${type}`)
     translatedLink.value = await data.link
 
-    //storeLink(firstLinkValue, translatedLink)
+    storeLink(firstLinkValue, translatedLink)
 }
 
 // Resets the button state on clear
@@ -232,9 +232,11 @@ watch(firstLinkValue, async (newLink, oldLink) => {
                 variant="ghost" size="xs" class="my-auto"> {{ translatedLink }} </UButton>
             <UButton trailing="true" icon="material-symbols:content-copy" :onclick="copy" v-if="copied" variant="ghost">
                 Copied! </UButton>
-
+                
         </UCard>
+        <RecentLinksComponent/>
     </div>
+
     <div class="flex flex-col items-center justify-center gap-4 mt-5" v-else>
         <USkeleton class="h-8 w-2/5"></USkeleton>
     </div>

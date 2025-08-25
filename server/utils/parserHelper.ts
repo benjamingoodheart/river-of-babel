@@ -9,6 +9,7 @@ export default class ParserHelper {
   constructor(link: String, originService: String) {
     let arr = String(link).split("/");
     arr = this.cleanArray(arr);
+    console.log(arr);
     this.originService = "Apple";
     if (originService == "Apple") {
       if (!this.isAppleSong(arr)) {
@@ -97,6 +98,19 @@ export default class ParserHelper {
       return false;
     }
     return true;
+  }
+
+  handleExtraReleaseInfo(releaseName): String {
+    if (releaseName.includes(" - Single")) {
+      let temp = releaseName.split(" - Single");
+      return temp[0];
+    }
+    if (releaseName.includes("- EP")) {
+      let temp = releaseName.split(" - EP");
+      console.log(temp);
+      return temp[0];
+    }
+    return releaseName;
   }
 
   cleanArray(arr: Array) {

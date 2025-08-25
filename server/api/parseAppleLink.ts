@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
     await resp.data.data[0].attributes.artistName
   ).split("&"); //splitting for multiple artists
   const releaseObj = ref({
-    title: resp.data.data[0].attributes.name,
+    title: parser.handleExtraReleaseInfo(resp.data.data[0].attributes.name),
     artists: artistArray,
     type: releaseType,
   });

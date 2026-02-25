@@ -32,11 +32,14 @@ export default defineEventHandler(async (event) => {
   if (type == "album") {
     //add artists fallback for external urls
     await resp.data.artists.items;
+    //TODO: Iterate through this trying to match the artist name
+    // Then match the item
     let itemsArr = await resp.data.albums.items;
     for (let item in itemsArr) {
       let tempName = await itemsArr[item].name;
       console.log(tempName);
-      if (tempName == decodeURI(title)) {
+      //to uppercase handles case differences between the services ie All My Friends Are so Depressed vs. All My Friends Are So Depressed
+      if (tempName.toUpperCase() == decodeURI(title).toUpperCase()) {
         let ret_link = await resp.data.albums.items[item].external_urls.spotify;
         return {
           link: await ret_link,
